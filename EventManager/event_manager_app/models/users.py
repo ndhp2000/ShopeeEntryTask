@@ -18,7 +18,7 @@ class UsersManager(models.Manager):
             return user
 
     def cache_all_username(self):
-        users = self.all()
+        users = self.all()[:10000]
         for user in users:
             cache.set(('USERS_MANAGER', user.username), user.serialize())
 

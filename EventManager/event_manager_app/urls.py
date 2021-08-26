@@ -1,6 +1,6 @@
 from django.urls import path
 
-from .models import UsersModel
+from .views.authentications.indetity import IdentityView
 from .views.authentications.log_in import LogInView
 from .views.authentications.log_out import LogOutView
 from .views.authentications.refresh_token import RefreshToken
@@ -9,7 +9,6 @@ from .views.events.event_comments import EventCommentsView
 from .views.events.event_likes import EventLikesView
 from .views.events.event_participants import EventParticipantsView
 from .views.events.events_list import EventsListView
-
 
 urlpatterns = [
     path(r'auth/login', LogInView.as_view(), name='auth_login'),  # POST
@@ -22,5 +21,5 @@ urlpatterns = [
     path(r'events/<int:event_id>/likes', EventLikesView.as_view(), name='likes_list_of_event'),  # GET, POST, DEL
     path(r'events/<int:event_id>/comments', EventCommentsView.as_view(),
          name='comments_list_of_event'),  # GET, POST, DEL
+    path(r'auth/identity', IdentityView.as_view(), name='identity')  # GET
 ]
-

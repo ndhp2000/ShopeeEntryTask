@@ -66,6 +66,6 @@ class RefreshToken(BaseView):
                                             data={'session_token': session_token, 'refresh_token': refresh_token,
                                                   'user_id': user['id'], 'username': user['username']}
                                             )
-            self.response.set_cookie("_sessionToken", session_token)
+            self.response.set_cookie("_sessionToken", session_token, secure=True,samesite='strict')
             logger.info("REFRESH TOKEN SUCCESS: ")
             return self.response

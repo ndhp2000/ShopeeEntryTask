@@ -1,47 +1,75 @@
-import asyncio
-import sys
-import threading
-
-from django.db import models, connection
-from django.core.cache import cache
 import logging
+import threading
+from queue import Queue
+from time import sleep
+
+from django.core.cache import cache
+from django.db import models
 
 # Get an instance of a logger
 logger = logging.getLogger('django')
 
 
+class Worker(threading.Thread):
+    def __init__(self):
+        threading.Thread.__init__(self)
+        self.queue = Queue(0)
+
+    # define your own run method
+    def run(self):
+        logger.info("WORKER RUNNING")
+        while True:
+            while not self.queue.empty():
+                session = self.queue.get()
+                SessionsModel.objects.update_or_create(user_id=session['user_id'],
+                                                       defaults={'session_token': session['session_token'],
+                                                                 'refresh_token': session['refresh_token'],
+                                                                 'expired_time': session['expired_time']})
+            sleep(3)
+
+    def add(self, session):
+        self.queue.put(session)
+
+
+WorkerInstance = Worker()
+
+
 class SessionsManager(models.Manager):
 
-    def is_session_token_existed(self, session_token):
+    @staticmethod
+    def is_session_token_existed(session_token):
         if cache.get(('Sessions_Manager', 'session_token', session_token)):
             return True
         return False
-        # return self.filter(session_token=session_token).exists()
 
-    def is_refresh_token_existed(self, refresh_token):
+    @staticmethod
+    def is_refresh_token_existed(refresh_token):
         if cache.get(('Sessions_Manager', 'refresh_token', refresh_token)):
             return True
         return False
-        # return self.filter(refresh_token=refresh_token).exists()
 
-    def __create_or_update_token(self, session_token, refresh_token, expired_time, user_id):
-        self.update_or_create(user_id=user_id, defaults={'session_token': session_token, 'refresh_token': refresh_token,
-                                                         'expired_time': expired_time})
-        # connection.close()
+    @staticmethod
+    def __create_or_update_token(session_token, refresh_token, expired_time, user_id):
+        WorkerInstance.add({
+            'session_token': session_token, 'refresh_token': refresh_token,
+            'expired_time': expired_time, 'user_id': user_id
+        })
+        # self.update_or_create(user_id=user_id,
+        #                       defaults={'session_token': session_token,
+        #                                 'refresh_token': refresh_token,
+        #                                 'expired_time': expired_time})
 
     def create_or_update_token(self, session_token, refresh_token, expired_time, user_id):
-        # th = threading.Thread(target=self.__create_or_update_token,
-        #                       args=(session_token, refresh_token, expired_time, user_id))
-        # th.daemon = True
-        # th.start()
-        # logger.info("is th alive" + str(th.is_alive()))
+
         self.__create_or_update_token(session_token, refresh_token, expired_time, user_id)
         # Delete old cache if have
+
         if cache.get(('Sessions_Manager', 'user_id', user_id)):
             old_session = cache.get(('Sessions_Manager', 'user_id', user_id))
             cache.delete(('Sessions_Manager', 'session_token', old_session['session_token']))
             cache.delete(('Sessions_Manager', 'refresh_token', old_session['refresh_token']))
             cache.delete(('Sessions_Manager', 'user_id', old_session['user_id']))
+
         # Add new cache
         new_session = {'user_id': user_id, 'session_token': session_token, 'refresh_token': refresh_token,
                        'expired_time': expired_time}
@@ -50,6 +78,7 @@ class SessionsManager(models.Manager):
         cache.set(('Sessions_Manager', 'user_id', new_session['user_id']), new_session)
 
     def get_by_session_token(self, session_token):
+
         if cache.get(('Sessions_Manager', 'session_token', session_token)):
             return cache.get(('Sessions_Manager', 'session_token', session_token))
 
@@ -60,8 +89,10 @@ class SessionsManager(models.Manager):
             return query.first().serialize()
 
     def get_by_refresh_token(self, refresh_token, user_id):
+
         if cache.get(('Sessions_Manager', 'refresh_token', refresh_token)):
             return cache.get(('Sessions_Manager', 'refresh_token', refresh_token))
+
         query = self.filter(refresh_token=refresh_token, user_id=user_id)
         if not query.exists():
             return None
@@ -69,20 +100,23 @@ class SessionsManager(models.Manager):
             return query.first().serialize()
 
     def delete_session_token(self, session_token):
+
         if cache.get(('Sessions_Manager', 'session_token', session_token)):
             old_session = cache.get(('Sessions_Manager', 'session_token', session_token))
             cache.delete(('Sessions_Manager', 'session_token', old_session['session_token']))
             cache.delete(('Sessions_Manager', 'refresh_token', old_session['refresh_token']))
             cache.delete(('Sessions_Manager', 'user_id', old_session['user_id']))
+
         self.filter(session_token=session_token).delete()
 
     def cache_all_session(self):
-        sessions = self.all()
+        sessions = self.all().select_related()
         for session in sessions:
             session = session.serialize()
             cache.set(('Sessions_Manager', 'session_token', session['session_token']), session)
             cache.set(('Sessions_Manager', 'refresh_token', session['refresh_token']), session)
             cache.set(('Sessions_Manager', 'user_id', session['user_id']), session)
+        WorkerInstance.start()
 
 
 class SessionsModel(models.Model):

@@ -69,7 +69,7 @@ class Command(BaseCommand):
         L = []
         for i in range(n_lines):
             username = "admin" + str(i + 1)
-            password = '$2b$12$ofIM/Pgx2H6Zt9fnXqDLEu6lnGcUM2khK7Duut/nq2RxL7A70q2MO'
+            password = '$2b$04$aKktvZPVkH8PmrmOYJ488OSYUGim20Z9eFfCjwI1jekx2dk0Cnpf.'
             name = (fake.name() + " " + str(i + 1))[:64]
             avatar_url = fake.gen_image()
             is_admin = random.randint(0, 1)

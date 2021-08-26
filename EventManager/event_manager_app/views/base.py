@@ -89,7 +89,10 @@ class BaseView(View):
             return super().dispatch(request, *args, **kwargs)
 
         except Exception as err:
+            logger.warning("UNHANDLED EXCEPTION")
             logger.warning(traceback.format_exc())
+            self.serialize_exception_response("UNHANDLE EXCEPTION")
+            return self.response
 
     def is_log_in(self, request):
         self.session_token = request.COOKIES.get('_sessionToken', None)

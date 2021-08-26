@@ -20,6 +20,6 @@ class LogOutView(BaseView):
 
         # Make response
         self.serialize_success_response("Log-out Successfully")
-        self.response.delete_cookie("_sessionToken")
+        self.response.delete_cookie("_sessionToken",samesite='strict')
 
         return self.response
