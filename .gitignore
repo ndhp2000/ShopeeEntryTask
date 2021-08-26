@@ -1,0 +1,17 @@
+# Django #
+log
+logs/
+static
+_mysql_mount
+.env
+venv
+__pycache__/
+*.pot
+*.pyc
+# Backup files #
+*.bak
+
+# If you are using PyCharm #
+.idea
+EventManager/logs
+EventManager/draft_running_file

@@ -1,0 +1,43 @@
+version: '2.4'
+services:
+  mysql:
+    build: ./mysql
+    container_name: mysql
+    ports:
+      - "33006:3306"
+    volumes:
+      - ./_mysql_mount:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATABASE=events_manager_entry_task_db
+    healthcheck:
+      test: "exit 0"
+  redis:
+    image: redis:alpine
+    container_name: redis
+  django_gunicorn:
+    container_name: django-gunicorn
+    volumes:
+      - ./static:/app/static
+    env_file:
+      - .env
+    build:
+      context: .
+    ports:
+      - "8000:8000"
+    cpus: 2
+    mem_limit: 1G
+    depends_on:
+      mysql:
+        condition: service_healthy
+      redis:
+        condition: service_started
+  nginx:
+    container_name: nginx
+    build: ./nginx
+    volumes:
+      - ./static:/static
+    ports:
+      - "80:80"
+    depends_on:
+      - django_gunicorn
