@@ -2,7 +2,6 @@
 log
 logs/
 _mysql_mount
-.env
 venv
 __pycache__/
 *.pot
