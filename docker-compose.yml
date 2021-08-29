@@ -17,7 +17,6 @@ services:
     container_name: redis
   django_gunicorn:
     container_name: django-gunicorn
-    restart: always
     volumes:
       - ./static:/app/static
     env_file:
