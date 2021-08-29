@@ -1,1 +1,0 @@
-CREATE DATABASE IF NOT EXISTS events_manager_entry_task_db;
