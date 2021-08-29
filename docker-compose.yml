@@ -25,7 +25,7 @@ services:
       context: .
     ports:
       - "8000:8000"
-    cpus: 2
+    cpus: 4
     mem_limit: 1G
     depends_on:
       mysql:

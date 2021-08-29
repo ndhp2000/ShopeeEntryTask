@@ -1,5 +1,10 @@
+import logging
+
 from django.db import models
 from django.core.cache import cache
+
+# Get an instance of a logger
+logger = logging.getLogger('django')
 
 
 class UsersManager(models.Manager):
@@ -18,9 +23,11 @@ class UsersManager(models.Manager):
             return user
 
     def cache_all_username(self):
+        logger.warning("START LOAD USERS TO CACHE")
         users = self.all()[:10000]
         for user in users:
             cache.set(('USERS_MANAGER', user.username), user.serialize())
+        logger.warning("DONE LOAD USERS TO CACHE")
 
     def get_user_model_by_id(self, user_id):
         user = self.filter(id=user_id)

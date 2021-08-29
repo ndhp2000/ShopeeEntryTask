@@ -1,7 +1,6 @@
 # Django #
 log
 logs/
-static
 _mysql_mount
 .env
 venv

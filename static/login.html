@@ -1,0 +1,51 @@
+<!--Content start-->
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Entry Task Shopee</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/css/bootstrap.min.css"
+        integrity="sha384-B0vP5xmATw1+K9KRQjQERJvTumQW0nPEzvF6L/Z6nronJ3oUOFUFpCjEUQouq2+l" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
+        integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
+        crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.6.0/dist/js/bootstrap.min.js"
+        integrity="sha384-+YQ4JLhjyBLPDQt//I+STsc9iw4uQqACwlvpslubQzn4u2UU2UFM80nGisd026JF"
+        crossorigin="anonymous"></script>
+</head>
+
+<body>
+    <main id="content">
+
+        <div class="container-fluid col-sm-12 align-middle" style="font-size:19px;">
+            <div id="content" class="container mt-5  p-2 py-4 p-md-5 mb-5  bg-light shadow"
+                style="background-color: rgb(255, 255, 255); ">
+                <h2>Đăng nhập</h2>
+                <hr>
+                <br>
+                <form id="loginForm" action="/app_api/auth/login" method="post">
+                    <div class="form-group">
+                        <label for="username">Tài khoản</label>
+                        <input type="text" class="form-control" id="username" name="username"
+                            placeholder="Nhập tài khoản" minlength="5" maxlength="40">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="password">Mật khẩu</label>
+                        <input type="password" class="form-control" id="password" placeholder="Nhập mật khẩu"
+                            maxlength="40" name="password">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Đăng nhập</button>
+                </form>
+            </div>
+        </div>
+
+    </main>
+    <script src="./js/login.js"></script>
+</body>

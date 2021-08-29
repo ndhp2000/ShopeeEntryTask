@@ -9,7 +9,6 @@ https://docs.djangoproject.com/en/2.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.2/ref/settings/
 """
-
 import os
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
@@ -18,12 +17,8 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/2.2/howto/deployment/checklist/
 
-# SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'h8b7q$usktg2g(hss0eez^q+%mk--bkum(b!+qd9=s@2bcm^c9'
-# SECRET_KEY = os.getenv('SECRET_KEY')
-
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['127.0.0.1', '0.0.0.0', 'django']
 
@@ -62,31 +57,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'EventManager.wsgi.application'
-
-# Database
-# https://docs.djangoproject.com/en/2.2/ref/settings/#databases
-#
-# DATABASES = {
-#     'default': {
-#         'ENGINE': 'django.db.backends.mysql',
-#         'NAME': 'events_manager_entry_task_db',
-#         'USER': 'root',
-#         'PASSWORD': 'password',
-#         'HOST': 'mysql',
-#         'PORT': '3306',
-#     }
-# }
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'django4',
-        'USER': 'root',
-        'PASSWORD': 'LinhLocPhuc11122000@gmail.com',
-        'HOST': '127.0.0.1',
-        'PORT': '3306',
-    }
-}
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -129,36 +99,10 @@ SESSION_COOKIE_SAMESITE = 'strict'
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
-# STATIC_URL = './static/'
-# STATIC_ROOT = './static/'
-STATIC_URL = '/home/phuc/Desktop/SHOPEE WORKING/Untitled/Sample_Nginx_Project/static/'
 
 APP_CONFIG = {
     'ENTRY_LIMIT_PER_PAGE': 20,
     'EXPIRE_TOKEN_PERIOD': 20
-}
-
-# CACHES = {
-#     "default": {
-#         "BACKEND": "django_redis.cache.RedisCache",
-#         "LOCATION": "redis://redis",
-#         "TIMEOUT": None,
-#         "OPTIONS": {
-#             "CLIENT_CLASS": "django_redis.client.DefaultClient"
-#         },
-#         "KEY_PREFIX": "REDIS"
-#     }
-# }
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": "redis://127.0.0.1:6379",
-        "TIMEOUT": None,
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient"
-        },
-        "KEY_PREFIX": "example"
-    }
 }
 
 LOGGING = {
@@ -196,3 +140,59 @@ LOGGING = {
         },
 }
 
+# DEPLOYMENT
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": "redis://redis",
+        "TIMEOUT": None,
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient"
+        },
+        "KEY_PREFIX": "REDIS"
+    }
+}
+
+STATIC_URL = './static/'
+STATIC_ROOT = './static/'
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'events_manager_entry_task_db',
+        'USER': 'root',
+        'PASSWORD': 'password',
+        'HOST': 'mysql',
+        'PORT': '3306',
+    }
+}
+
+SECRET_KEY = os.getenv('SECRET_KEY')
+
+# DEV ENV
+#
+# SECRET_KEY = 'h8b7q$usktg2g(hss0eez^q+%mk--bkum(b!+qd9=s@2bcm^c9'
+#
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.mysql',
+#         'NAME': 'django4',
+#         'USER': 'root',
+#         'PASSWORD': 'LinhLocPhuc11122000@gmail.com',
+#         'HOST': '127.0.0.1',
+#         'PORT': '3306',
+#     }
+# }
+# STATIC_URL = '/home/phuc/Desktop/SHOPEE WORKING/Untitled/Sample_Nginx_Project/static/'
+#
+# CACHES = {
+#     "default": {
+#         "BACKEND": "django_redis.cache.RedisCache",
+#         "LOCATION": "redis://127.0.0.1:6379",
+#         "TIMEOUT": None,
+#         "OPTIONS": {
+#             "CLIENT_CLASS": "django_redis.client.DefaultClient"
+#         },
+#         "KEY_PREFIX": "example"
+#     }
+# }

@@ -14,10 +14,10 @@ class Worker(threading.Thread):
     def __init__(self):
         threading.Thread.__init__(self)
         self.queue = Queue(0)
+        self.status = 0
 
     # define your own run method
     def run(self):
-        logger.info("WORKER RUNNING")
         while True:
             while not self.queue.empty():
                 session = self.queue.get()
@@ -50,6 +50,10 @@ class SessionsManager(models.Manager):
 
     @staticmethod
     def __create_or_update_token(session_token, refresh_token, expired_time, user_id):
+        if WorkerInstance.status == 0:
+            WorkerInstance.start()
+            WorkerInstance.status = 1
+
         WorkerInstance.add({
             'session_token': session_token, 'refresh_token': refresh_token,
             'expired_time': expired_time, 'user_id': user_id
@@ -64,12 +68,11 @@ class SessionsManager(models.Manager):
         self.__create_or_update_token(session_token, refresh_token, expired_time, user_id)
         # Delete old cache if have
 
-        if cache.get(('Sessions_Manager', 'user_id', user_id)):
-            old_session = cache.get(('Sessions_Manager', 'user_id', user_id))
+        old_session = cache.get(('Sessions_Manager', 'user_id', user_id))
+        if old_session:
             cache.delete(('Sessions_Manager', 'session_token', old_session['session_token']))
             cache.delete(('Sessions_Manager', 'refresh_token', old_session['refresh_token']))
             cache.delete(('Sessions_Manager', 'user_id', old_session['user_id']))
-
         # Add new cache
         new_session = {'user_id': user_id, 'session_token': session_token, 'refresh_token': refresh_token,
                        'expired_time': expired_time}
@@ -110,13 +113,12 @@ class SessionsManager(models.Manager):
         self.filter(session_token=session_token).delete()
 
     def cache_all_session(self):
-        sessions = self.all().select_related()
+        sessions = self.all().select_related()[:10000]
         for session in sessions:
             session = session.serialize()
             cache.set(('Sessions_Manager', 'session_token', session['session_token']), session)
             cache.set(('Sessions_Manager', 'refresh_token', session['refresh_token']), session)
             cache.set(('Sessions_Manager', 'user_id', session['user_id']), session)
-        WorkerInstance.start()
 
 
 class SessionsModel(models.Model):
